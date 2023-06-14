@@ -1,18 +1,7 @@
-import React, { useContext, useEffect } from "react";
-import DiariesContext from "../Context/notes/diariesContext";
+import React from "react";
 
-const About = () => {
-  const a = useContext(DiariesContext);
-  useEffect(() => {
-    a.update();
-    // eslint-disable-next-line
-  }, []);
-
-  return (
-    <div>
-      This is About {a.state.name} and his age is {a.state.age}
-    </div>
-  );
+function About() {
+  return <div>This is About Page</div>;
 };
 
 export default About;

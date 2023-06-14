@@ -1,7 +1,14 @@
-import React from "react";
+import DiaryPages from "./DiaryPages";
+import AddPage from "./AddPage";
 
-const Home = () => {
-  return <div>This is Home Comp</div>;
+function Home() {
+
+  return (
+    <>
+      <AddPage />
+      <DiaryPages />
+    </>
+  );
 };
 
 export default Home;
