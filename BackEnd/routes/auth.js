@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchuser");
 
 const JWT_TOKEN = "HariIsAGoodBoy$#";
+let success = false;
 
 //ROUTE 1 : Create a user using Post endpoint: "/api/user/createUser". Doesn't require authentication
 
@@ -33,14 +34,12 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ error: "Some one with this email already exists" });
+          .json({success, error: "Some one with this email already exists" });
       }
 
       //Using Hashing teching to protect password:
       const salt = await bcrypt.genSalt(10);
-      console.log(salt);
       const secPass = await bcrypt.hash(req.body.password, salt);
-      console.log(secPass);
 
       // Create a user:
       user = await User.create({
@@ -54,7 +53,8 @@ router.post(
         id: user.id,
       };
       const authToken = jwt.sign(data, JWT_TOKEN);
-      res.json(authToken);
+      success = true;
+      res.json({success, authToken});
 
       //Catching the error if any occured in the server:
     } catch (error) {
@@ -88,13 +88,15 @@ router.post(
       }
       const passwordCompare = await bcrypt.compare(password, user.password);
       if (!passwordCompare) {
-        return res.status(400).json({ error: "Email and password mismatch" });
+        success = false;
+        return res.status(400).json({success, error: "Email and password mismatch" });
       }
       const data = {
         id: user.id,
       };
       const authToken = jwt.sign(data, JWT_TOKEN);
-      res.json({ authToken: authToken });
+      success = true;
+      res.json({success, authToken: authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).send({ error: "Internal server Error" });

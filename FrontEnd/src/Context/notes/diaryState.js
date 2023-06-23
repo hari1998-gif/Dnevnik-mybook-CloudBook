@@ -6,17 +6,19 @@ const DiaryState = (props) => {
   const initialPages = [];
   const [pagesInDiary, setPagesInDiary] = useState(initialPages);
 
+
   // Get All pages in the diary:
   const getAllPagesInDiary = async () => {
     const response = await fetch(`${host}/api/notes/fetchallnotes`, {
       method: "GET",
       headers: {
-        'Content-Type': 'application/json',
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NmYxYzMyYjhmYjA4NDQ5Y2QxYjg1NSIsImlhdCI6MTY4NTAwMzUzMX0.YfJqeWcYIJGt1Vn6sIi-WruVpZ95f6VHGyyrVuyRbIo",
+        "Content-Type": "application/json",
+        "auth-token": localStorage.getItem("token"),
       },
     });
+
     const json = await response.json();
-    setPagesInDiary(json)
+    setPagesInDiary(json);
   };
 
   // Add a New Page:
@@ -26,25 +28,13 @@ const DiaryState = (props) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NmYxYzMyYjhmYjA4NDQ5Y2QxYjg1NSIsImlhdCI6MTY4NTAwMzUzMX0.YfJqeWcYIJGt1Vn6sIi-WruVpZ95f6VHGyyrVuyRbIo",
+        "auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    const json = await response.json();
-    console.log(json);
-
-    // Logic for Creating new Page on client side:
-    const newPage = {
-      _id: "647f40ca59c92smdbbksbklsndad001ea7cacc",
-      user: "646f1c32b8fb08449cd1b855",
-      title: title,
-      description: description,
-      tag: tag,
-      date: "2023-06-06T14:20:58.039Z",
-      __v: 0,
-    };
-
+    const newPage = await response.json();
     setPagesInDiary(pagesInDiary.concat(newPage));
+    props.showAlert("New data created", "success");
   };
 
   // Edit the page:
@@ -54,16 +44,15 @@ const DiaryState = (props) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NmYxYzMyYjhmYjA4NDQ5Y2QxYjg1NSIsImlhdCI6MTY4NTAwMzUzMX0.YfJqeWcYIJGt1Vn6sIi-WruVpZ95f6VHGyyrVuyRbIo",
+        "auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({ title, description, tag }),
     });
     const json = await response.json();
     console.log(json);
 
-
     // Logic for Editing the page:
-    const editPageInDiary = JSON.parse(JSON.stringify(pagesInDiary))
+    const editPageInDiary = JSON.parse(JSON.stringify(pagesInDiary));
 
     for (let index = 0; index < editPageInDiary.length; index++) {
       const element = editPageInDiary[index];
@@ -75,7 +64,8 @@ const DiaryState = (props) => {
         break;
       }
     }
-    setPagesInDiary(editPageInDiary)
+    setPagesInDiary(editPageInDiary);
+    props.showAlert("page edited successfully", "success");
   };
 
   // Delete the Page:
@@ -85,7 +75,7 @@ const DiaryState = (props) => {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NmYxYzMyYjhmYjA4NDQ5Y2QxYjg1NSIsImlhdCI6MTY4NTAwMzUzMX0.YfJqeWcYIJGt1Vn6sIi-WruVpZ95f6VHGyyrVuyRbIo",
+        "auth-token": localStorage.getItem("token"),
       },
     });
     const json = await response.json();
@@ -94,6 +84,7 @@ const DiaryState = (props) => {
     // Logic for client side running:
     const newPages = pagesInDiary.filter((page) => page._id !== id);
     setPagesInDiary(newPages);
+    props.showAlert("Page deleted successfully", "success");
   };
 
   return (
@@ -103,7 +94,7 @@ const DiaryState = (props) => {
         addANewPage,
         editTheExistingPage,
         deleteTheExistingPage,
-        getAllPagesInDiary
+        getAllPagesInDiary,
       }}
     >
       {props.children}

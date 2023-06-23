@@ -8,7 +8,7 @@ const AddPage = () => {
   const [newPage, setNewPage] = useState({
     title: "",
     description: "",
-    tag: "default",
+    tag: "",
   });
 
   // Clicking on Submit button will add a new page to the Exising Pages:
@@ -16,6 +16,11 @@ const AddPage = () => {
   const handleClick = (e) => {
     e.preventDefault();
     addANewPage(newPage.title, newPage.description, newPage.tag);
+    setNewPage({
+      title: "",
+      description: "",
+      tag: "",
+    })
   };
 
   // OnChange event will set the diary with the new title and description:
@@ -23,15 +28,14 @@ const AddPage = () => {
   const handleChange = (e) => {
     setNewPage({ ...newPage, [e.target.name]: e.target.value });
   };
-
   return (
     <>
       <div className="container my-3">
-        <h2>New Notes</h2>
-        <form>
+        <h2>Create a new page</h2>
+        <div>
           <div className="mb-3">
             <label htmlFor="title" className="form-label">
-              Title
+              <strong>Title</strong>
             </label>
             <input
               type="text"
@@ -40,24 +44,28 @@ const AddPage = () => {
               name="title"
               aria-describedby="emailHelp"
               onChange={handleChange}
+              minLength={5}
+              value={newPage.title}
             />
           </div>
           <div className="mb-3">
             <label htmlFor="description" className="form-label">
-              Description
+              <strong>Description</strong>
             </label>
-            <input
+            <textarea
               type="text"
               className="form-control"
               id="description"
               name="description"
               autoComplete="current-password"
               onChange={handleChange}
+              minLength={5} 
+              value={newPage.description} 
             />
           </div>
           <div className="mb-3">
             <label htmlFor="tag" className="form-label">
-              Tag
+              <strong>Tag</strong>
             </label>
             <input
               type="text"
@@ -66,16 +74,19 @@ const AddPage = () => {
               name="tag"
               autoComplete="current-password"
               onChange={handleChange}
+              minLength={5}
+              value={newPage.tag}
             />
           </div>
           <button
+            disabled={newPage.title.length < 5 || newPage.description.length < 5}
             type="submit"
             className="btn btn-primary"
             onClick={handleClick}
           >
-            Submit
+            Add Page
           </button>
-        </form>
+        </div>
       </div>
     </>
   );
